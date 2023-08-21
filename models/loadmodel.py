@@ -40,7 +40,7 @@ def style(opt):
     # if you are using PyTorch newer than 0.4 (e.g., built from
     # GitHub source), you can remove str() on self.device
     state_dict = torch.load(opt.model_path, map_location='cpu')
-    if hasattr(state_dict, '_metadata'):git@github.com:abev66/DeepMosaics.git
+    if hasattr(state_dict, '_metadata'):
         del state_dict._metadata
 
     # patch InstanceNorm checkpoints prior to 0.4
