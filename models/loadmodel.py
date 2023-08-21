@@ -6,6 +6,7 @@ from .pix2pixHD_model import define_G as pix2pixHD_G
 # from .videoHD_model import MosaicNet as MosaicNet_HD
 from .BiSeNet_model import BiSeNet
 from .BVDNet import define_G as video_G
+import intel_extension_for_pytorch as ipex
 
 def show_paramsnumber(net,netname='net'):
     parameters = sum(param.numel() for param in net.parameters())
@@ -22,6 +23,7 @@ def pix2pix(opt):
     netG.load_state_dict(torch.load(opt.model_path))
     netG = model_util.todevice(netG,opt.gpu_id)
     netG.eval()
+    netG = ipex.optimize(netG)
     return netG
 
 
@@ -38,7 +40,7 @@ def style(opt):
     # if you are using PyTorch newer than 0.4 (e.g., built from
     # GitHub source), you can remove str() on self.device
     state_dict = torch.load(opt.model_path, map_location='cpu')
-    if hasattr(state_dict, '_metadata'):
+    if hasattr(state_dict, '_metadata'):git@github.com:abev66/DeepMosaics.git
         del state_dict._metadata
 
     # patch InstanceNorm checkpoints prior to 0.4
@@ -48,6 +50,7 @@ def style(opt):
 
     netG = model_util.todevice(netG,opt.gpu_id)
     netG.eval()
+    netG = ipex.optimize(netG)
     return netG
 
 def video(opt):
@@ -56,6 +59,7 @@ def video(opt):
     netG.load_state_dict(torch.load(opt.model_path))
     netG = model_util.todevice(netG,opt.gpu_id)
     netG.eval()
+    netG = ipex.optimize(netG)
     return netG
 
 def bisenet(opt,type='roi'):
@@ -70,4 +74,5 @@ def bisenet(opt,type='roi'):
         net.load_state_dict(torch.load(opt.mosaic_position_model_path))
     net = model_util.todevice(net,opt.gpu_id)
     net.eval()
+    net = ipex.optimize(net)
     return net
