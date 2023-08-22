@@ -33,6 +33,8 @@ def run(args,mode = 0):
 
 def video2image(videopath, imagepath, fps=0, start_time='00:00:00', last_time='00:00:00'):
     args = ['ffmpeg']
+    if os.path.exists('/dev/dri/renderD128'):
+        args += [ '-hwaccel', 'vaapi', '-hwaccel_device', '/dev/dri/renderD128' ]
     if last_time != '00:00:00':
         args += ['-ss', start_time]
         args += ['-t', last_time]
