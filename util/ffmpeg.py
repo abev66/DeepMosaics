@@ -53,7 +53,11 @@ def video2voice(videopath, voicepath, start_time='00:00:00', last_time='00:00:00
     run(args)
 
 def image2video(fps,imagepath,voicepath,videopath):
-    os.system('ffmpeg -y -r '+str(fps)+' -i '+imagepath+' -vcodec libx264 '+os.path.split(voicepath)[0]+'/video_tmp.mp4')
+    if os.path.exists('/dev/dri/renderD128'):
+        os.system('ffmpeg -y -vaapi_device /dev/dri/renderD128 -i '+imagepath+' -vf "format=nv12,hwupload" -c:v h264_vaapi -r:v '+str(fps)+' '+os.path.split(voicepath)[0]+'/video_tmp.mp4')
+    else:
+        os.system('ffmpeg -y -r '+str(fps)+' -i '+imagepath+' -vcodec libx264 '+os.path.split(voicepath)[0]+'/video_tmp.mp4')
+
     if os.path.exists(voicepath):
         os.system('ffmpeg -i '+os.path.split(voicepath)[0]+'/video_tmp.mp4'+' -i "'+voicepath+'" -c:v copy -c:a copy '+videopath)
     else:
